@@ -10,7 +10,17 @@ This is a component of the [mojfile-uploader](https://github.com/ministryofjusti
 
 # Usage
 
-Using docker compose
-
     docker build -t clamav .
+
+    docker run -d -p 3310:3310 --name clamd clamav
+
+# Push to MoJ repository
+
+Adjust version number, as appropriate
+
+    docker tag clamav registry.service.dsd.io/ministryofjustice/clamav:0.1.0
+
+    docker push registry.service.dsd.io/ministryofjustice/clamav:0.1.0
+
+
 
