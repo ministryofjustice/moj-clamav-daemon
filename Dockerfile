@@ -1,33 +1,26 @@
-FROM centos:centos7
+FROM alpine:latest
 
-RUN yum clean all && yum update -y && yum clean all && rpm --rebuilddb
+# Important!  Update this no-op ENV variable when this Dockerfile is updated
+# with the current date. It will force refresh of all of the base images and
+# will prevent the package manager from using old cached versions when the
+# Dockerfile is built.
+ENV REFRESHED_AT=2017-05-08
 
-ENV CLAM_VERSION=0.99.2
-RUN yum install -y gcc openssl-devel wget make
+# Rsyslog is installed and started because neither clamd nor freshclam can
+# write to /dev/stdout. They attempt to open it in append mode, which raises an
+# error.
+RUN apk --update --no-cache add \
+  bash \
+  bash-completion \
+  clamav \
+  clamav-libunrar \
+  rsyslog
 
-RUN wget https://www.clamav.net/downloads/production/clamav-${CLAM_VERSION}.tar.gz && \
-    tar xvzf clamav-${CLAM_VERSION}.tar.gz && \
-    cd clamav-${CLAM_VERSION} && \
-    ./configure && \
-    make && make install
-
-RUN  mkdir /usr/local/share/clamav
-
-RUN yum remove -y gcc make wget #cleanup
-RUN yum update -y && yum clean all
-RUN mkdir /var/run/clamav && \
-    chmod 750 /var/run/clamav
-
-# Configure Clam AV...
-ADD ./*.conf /usr/local/etc/
-ADD ./readyness.sh /
-
-VOLUME /var/lib/clamav
-
-COPY docker-entrypoint.sh /
-
-ENTRYPOINT ["/docker-entrypoint.sh"]
+WORKDIR /
+COPY . /
+RUN mkdir -p /var/lib/clamav
+RUN chown clamav /var/lib/clamav
 
 EXPOSE 3310
 
-CMD ["clamd"]
+CMD ["/run.sh"]
