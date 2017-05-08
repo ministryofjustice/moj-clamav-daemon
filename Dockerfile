@@ -1,33 +1,20 @@
-FROM centos:centos7
+FROM alpine:latest
 
-RUN yum clean all && yum update -y && yum clean all && rpm --rebuilddb
+# Rsyslog is installed and started because neither clamd nor freshclam can
+# write to /dev/stdout. They attempt to open it in append mode, which raises an
+# error.
+RUN apk --update --no-cache add \
+  bash \
+  bash-completion \
+  clamav \
+  clamav-libunrar \
+  rsyslog
 
-ENV CLAM_VERSION=0.99.2
-RUN yum install -y gcc openssl-devel wget make
-
-RUN wget https://www.clamav.net/downloads/production/clamav-${CLAM_VERSION}.tar.gz && \
-    tar xvzf clamav-${CLAM_VERSION}.tar.gz && \
-    cd clamav-${CLAM_VERSION} && \
-    ./configure && \
-    make && make install
-
-RUN  mkdir /usr/local/share/clamav
-
-RUN yum remove -y gcc make wget #cleanup
-RUN yum update -y && yum clean all
-RUN mkdir /var/run/clamav && \
-    chmod 750 /var/run/clamav
-
-# Configure Clam AV...
-ADD ./*.conf /usr/local/etc/
-ADD ./readyness.sh /
-
+WORKDIR /
 VOLUME /var/lib/clamav
 
-COPY docker-entrypoint.sh /
-
-ENTRYPOINT ["/docker-entrypoint.sh"]
+COPY . /
 
 EXPOSE 3310
 
-CMD ["clamd"]
+CMD ["/run.sh"]
