@@ -14,9 +14,9 @@ This is a component of the [mojfile-uploader](https://github.com/ministryofjusti
 
 Adjust version number, as appropriate
 
-    docker tag clamav registry.service.dsd.io/ministryofjustice/clamav:0.1.0
+    docker tag clamav registry.service.dsd.io/ministryofjustice/clamav:0.2.0
 
-    docker push registry.service.dsd.io/ministryofjustice/clamav:0.1.0
+    docker push registry.service.dsd.io/ministryofjustice/clamav:0.2.0
 
 ## Database
 
