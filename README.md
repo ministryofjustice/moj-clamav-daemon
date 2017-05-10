@@ -26,3 +26,11 @@ this fails.
 
 After it is running, `freshclam` continues to run as a daemon, and will
 check for updates every two hours.
+
+## Haproxy
+
+This is used to ensure that a database update does not stop the av
+service from responding.  Clamd blocks for around 20 seconds when it
+reloads an updated database. While it is reloading, the clamav-rest client
+errors. At the time of this comment this is happening frequently enough
+that we have seen it occur with real users on the production service.
