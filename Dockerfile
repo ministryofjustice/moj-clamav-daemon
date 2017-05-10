@@ -4,7 +4,7 @@ FROM alpine:latest
 # with the current date. It will force refresh of all of the base images and
 # will prevent the package manager from using old cached versions when the
 # Dockerfile is built.
-ENV REFRESHED_AT=2017-05-09
+ENV REFRESHED_AT=2017-05-10
 
 # Rsyslog is installed and started because neither clamd nor freshclam can
 # write to /dev/stdout. They attempt to open it in append mode, which raises an
